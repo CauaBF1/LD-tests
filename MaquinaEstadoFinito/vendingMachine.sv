@@ -16,7 +16,7 @@ module vm (
 
             s4: Y = s1;
 
-            s5: Y = s1;
+            s5: Y = s3; 
 
             default: Y = 5'bxxxxx;  
         endcase
