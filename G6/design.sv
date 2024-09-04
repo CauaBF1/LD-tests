@@ -1,27 +1,27 @@
 ////////////////////////////Comportamental/////////////////////////////////////////////
-module grupo06(input w, clk, rst, output reg z);
+module grupo06(input w, clk, rst, output z);
 
-  reg [1:0] y;
+  reg [1:0] y, Y;
   parameter [1:0] A = 2'b00, B = 2'b01, C = 2'b10, D = 2'b11;
 
-  
-  always @(posedge clk or negedge rst) begin
-    if (!rst)
+  always @(posedge clk, negedge rst)begin
+    if (!rst)	
       y <= A;
-    else begin
-      case (y)
-        A: y <= w ? B : A;
-        B: y <= w ? B : C;
-        C: y <= w ? D : A;
-        D: y <= w ? B : A;
-        default: y <= A;
-      endcase
-
-      
-      z <= (y == D);
-    end
+	else	
+      y <= Y;
   end
-
+		
+  always @(w,y) begin
+      case (y)
+        A: Y <= w ? B : A;
+        B: Y <= w ? B : C;
+        C: Y <= w ? D : A;
+        D: Y <= w ? B : C;
+        default: Y <= 2'bxx;
+      endcase
+  end
+  
+assign z = (y == D);
 endmodule
 
 
@@ -53,7 +53,7 @@ module fsm_logic(input [1:0] y, input w, output reg [1:0] Y);
       A: Y = w ? B : A;
       B: Y = w ? B : C;
       C: Y = w ? D : A;
-      D: Y = w ? B : A;
+      D: Y = w ? B : C;
       default: Y = 2'bxx;
     endcase
   end

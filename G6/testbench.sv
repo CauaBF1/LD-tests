@@ -1,6 +1,6 @@
 module tb_grupoA5();
 
-    reg clk;
+    reg Clock;
     reg reset;
     reg w;
     wire z_comportamental;
@@ -8,7 +8,7 @@ module tb_grupoA5();
 
   
     grupo06 a1 (
-        .clk(clk),
+        .clk(Clock),
         .rst(reset),
         .w(w),
         .z(z_comportamental)
@@ -16,64 +16,72 @@ module tb_grupoA5();
 
     
   	grupo06Estrutual a2 (
-        .clk(clk),
+        .clk(Clock),
         .rst(reset),
         .w(w),
         .z(z_estrututal)
     );
 
-    // clock
-    always #5 clk = ~clk;
+  always #50 Clock = ~Clock;
 
-    initial begin
-        
-        clk = 0;
-        reset = 1;
-        w = 0;
+  initial begin
 
-        
-      	#10 reset = 0;
-        #10 reset = 1;
+    Clock = 0;
+    reset = 0;
+    w = 0;
 
-        
-      	#10 w = 1;
-        #10 w = 0;
-        #10 w = 1;
+    #10 reset = 1;
 
-        
-      	#10 w = 1;
-        #10 w = 0;
-        #10 w = 1;
+    #10 @(posedge Clock) w = 1; 
+    #10 display_check(1);
+    
+    #10 @(posedge Clock)  w = 0; 
+    #10 display_check(2);
+    
+    #10 @(posedge Clock)  w = 1; 
+    #10 display_check(3);
+    
+    #10 @(posedge Clock)  w = 0; 
+    #10 display_check(4);
+    
+    #10 @(posedge Clock)  w = 1; 
+    #10 display_check(5);
+    
+    #10 @(posedge Clock)  w = 1; 
+    #10 display_check(6);
+    
+    #10 @(posedge Clock)  w = 0; 
+    #10 display_check(7);
+    
+    #10 @(posedge Clock)  w = 1; 
+    #10 display_check(8);
+    
+    #10 @(posedge Clock)  w = 0; 
+    #10 display_check(9);
+    
+    #10 @(posedge Clock)  w = 0; 
+    #10 display_check(10);
+    
+    #10 @(posedge Clock)  w = 0; 
+    #10 display_check(11);
+    
+    #10 @(posedge Clock)  w = 1; 
+    #10 display_check(12);
 
-        
-      	#10 $finish;
+    
+    #20 $finish;
+  end
+
+  //exibir o resultado de cada teste
+  task display_check(input integer cycle);
+    begin
+      if (z_comportamental === z_estrututal)
+        $display("Teste %0d: w = %b, z_comportamental = %b, z_estrututal = %b -- OK", cycle, w, z_comportamental, z_estrututal);
+      else
+        $display("Teste %0d: w = %b, z_comportamental = %b, z_estrututal = %b -- ERRO", cycle, w, z_comportamental, z_estrututal);
     end
-  
-    initial begin
-        
-      $monitor("At time %t: w = %b, clk = %b, rst = %b, z_comportamental = %b, z_estrutural = %b", 
-                 $time, w, clk, reset, z_comportamental, z_estrututal);
-    end
+  endtask
 
 endmodule
 
 
-
-
-/*
-# At time                   35: w = 1, clk = 1, rst = 1, z_comportamental = 0, z_estrututal = 0
-w=1
-# At time                   40: w = 0, clk = 0, rst = 1, z_comportamental = 0, z_estrututal = 0
-w=-
-# At time                   45: w = 0, clk = 1, rst = 1, z_comportamental = 0, z_estrututal = 0
-w=0
-# At time                   50: w = 1, clk = 0, rst = 1, z_comportamental = 0, z_estrututal = 0
-w=-
-# At time                   55: w = 1, clk = 1, rst = 1, z_comportamental = 0, z_estrututal = 1
-w=1  z_estrutural = 1
-# At time                   60: w = 1, clk = 0, rst = 1, z_comportamental = 0, z_estrututal = 1
-z_estrutural = 1 z_comportamental ainda não é 1 pq clk nao subiu
-
-# At time                   65: w = 1, clk = 1, rst = 1, z_comportamental = 1, z_estrututal = 0
-z_estrutural = 1 z_comportamental = 1(subiu clk)
-*/
