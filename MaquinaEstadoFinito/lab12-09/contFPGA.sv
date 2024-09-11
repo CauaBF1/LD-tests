@@ -18,7 +18,11 @@ module top(
     assign nKEY = ~KEY[0];
     cont5 i1 (nKEY, SW[1], clk1hz, count);
     dec7seg i2 (count, HEX0);
+	
 
+    always @(posedge clk1hz)begin
+	LEDR[0] <= ~LEDR[0];
+    end
 endmodule
 
 

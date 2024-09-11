@@ -1,10 +1,11 @@
 // Top Level Module
 module top_level (
     input wire CLOCK_50,    // Clock de 50 MHz
-    input wire reset,       // Botão de reset (ativo alto, mas será negado)
-    input wire dir,         // Botão de direção (ativo alto, mas será negado)
+    input wire [3:0] SW,       // Botão de reset (ativo alto, mas será negado)
+    input wire [3:0] KEY,         // Botão de direção (ativo alto, mas será negado)
     output wire [6:0] HEX0, // Saída para o display de 7 segmentos (negado)
-    output wire [3:0] count // Saída da contagem (negado)
+    output wire [3:0] count, // Saída da contagem (negado)
+	 output reg [3:0] LEDR
 );
 
     wire [2:0] contador;    // Saída de 3 bits do contador (contagem de 0 a 5)
@@ -14,15 +15,15 @@ module top_level (
     // Divisor de Frequência para gerar 1 Hz a partir de 50 MHz
     divisor_frequencia divisor_inst (
         .clk_50MHz(CLOCK_50), 
-        .reset(~reset), // Negar o sinal de reset
+        .reset(KEY[0]), // Negar o sinal de reset
         .clk_1Hz(clk_1Hz)  // Clock de 1 Hz gerado
     );
-
+	 
     // Módulo contador Moore
     contador_moore contador_inst (
         .CLOCK(clk_1Hz), 
-        .reset(~reset),  // Negar o sinal de reset
-        .dir(~dir),      // Negar o sinal de direção
+        .reset(KEY[0]),  // Negar o sinal de reset
+        .dir(SW[3]),      // Negar o sinal de direção
         .count(contador) // Saída de 3 bits
     );
 
@@ -37,8 +38,12 @@ module top_level (
     );
 
     // Negar as saídas dos displays
-    assign HEX0 = ~segs;   // Inverter os sinais de saída do display de 7 segmentos
-    assign count = ~contador_ext;  // Inverter a contagem
+    assign HEX0 = segs;   // Inverter os sinais de saída do display de 7 segmentos
+    assign count = contador_ext;  // Inverter a contagem
+	 
+	 always @(posedge clk_1Hz) begin
+		LEDR[0] <= ~LEDR[0]; // Alterna o estado do LED na borda de subida
+	 end
 
 endmodule
 
@@ -73,21 +78,18 @@ module contador_moore(
     input wire reset,       // Botão de reset
     input wire dir,         // Botão de direção
     output reg [2:0] count  // Saída da contagem (3 bits para contar de 0 a 5)
-    
 );
 
     // Estados da máquina de estados
-    typedef enum reg [2:0] {
-        S0 = 3'b000,
-        S1 = 3'b001,
-        S2 = 3'b010,
-        S3 = 3'b011,
-        S4 = 3'b100,
-        S5 = 3'b101
-    } state_t;
-
-    // Estado atual e próximo estado
     reg [2:0] current_state, next_state;
+
+    // Definição dos estados
+    localparam S0 = 3'b000;
+    localparam S1 = 3'b001;
+    localparam S2 = 3'b010;
+    localparam S3 = 3'b011;
+    localparam S4 = 3'b100;
+    localparam S5 = 3'b101;
 
     // Máquina de estados
     always @(posedge CLOCK or posedge reset) begin
