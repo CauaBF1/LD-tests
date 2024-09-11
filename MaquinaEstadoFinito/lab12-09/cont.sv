@@ -7,6 +7,7 @@ module top(
 ); 
     cont5 i1 (rst, dir, clk, count);
     dec7seg i2 (count, HEX0);
+    // 
 
 endmodule
 

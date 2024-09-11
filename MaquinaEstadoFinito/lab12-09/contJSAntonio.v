@@ -38,6 +38,7 @@ module contador_moore(
     input wire reset,       // Botão de reset
     input wire dir,         // Chave de direção (0 = UP, 1 = DOWN)
     output reg [2:0] count  // Saída da contagem (3 bits para contar de 0 a 5)
+    
 );
 
     // Estados da máquina de estados

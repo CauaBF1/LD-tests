@@ -45,6 +45,7 @@ module cont5 (
             E: Y <= sw ? D : F;
             F: Y <= sw ? E : A; 
             default: Y <= 3'bxx;
+            
         endcase
     end
 
