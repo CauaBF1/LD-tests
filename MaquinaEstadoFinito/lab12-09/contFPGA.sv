@@ -25,6 +25,17 @@ module top(
     end
 endmodule
 
+/*
+reg [25:0] cnt;
+
+always @(posedge CLOCK_50)
+    if(cnt < (25_000_000 -1))
+        cnt <= cnt + 1;
+    else
+        cnt <= 0;
+        clk1hz <= ~clk1hz
+*/
+
 
 
 module cont5 (
